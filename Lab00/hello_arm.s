@@ -70,7 +70,7 @@ _start:
     // After this instruction, X5 should equal 5 (because 10 - 5 = 5)
     //
     // YOUR CODE HERE:
-    sub X5, X1, X0
+    sub X5, X0, X1
 
     // -------------------------------------------------------------------------
     // EXERCISE 4: Create your own calculation
