@@ -51,7 +51,7 @@ _start:
     // After this instruction, X3 should equal 25
     //
     // YOUR CODE HERE:
-
+    mov X3, #25
 
     // -------------------------------------------------------------------------
     // EXERCISE 2: Perform addition
@@ -60,7 +60,7 @@ _start:
     // After this instruction, X4 should equal 40 (because 15 + 25 = 40)
     //
     // YOUR CODE HERE:
-
+    add X4, X2, X3
 
     // -------------------------------------------------------------------------
     // EXERCISE 3: Perform subtraction
@@ -70,7 +70,7 @@ _start:
     // After this instruction, X5 should equal 5 (because 10 - 5 = 5)
     //
     // YOUR CODE HERE:
-
+    sub X5, X1, X0
 
     // -------------------------------------------------------------------------
     // EXERCISE 4: Create your own calculation
@@ -80,7 +80,7 @@ _start:
     // After your code, X6 MUST equal exactly 100 for the autograder to pass.
     //
     // YOUR CODE HERE:
-
+    mov X6, #100
 
     // =========================================================================
     // PROGRAM TERMINATION
