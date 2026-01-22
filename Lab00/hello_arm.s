@@ -2,8 +2,8 @@
 // CS 271 Computer Architecture - Lab 00: Introduction to ARM Assembly
 // Purdue University Fort Wayne
 // =============================================================================
-// STUDENT NAME: ___________________
-// DATE:         ___________________
+// STUDENT NAME: Gabriel Burns
+// DATE:         1/21/2026
 // =============================================================================
 //
 // LEARNING OBJECTIVES:
