@@ -1,22 +1,20 @@
 // =============================================================================
-// CS 271 Computer Architecture - Lab 02: Post-Increment Addressing
+// CS 271 Computer Architecture - Lab 02: Instruction Encoding
 // Purdue University Fort Wayne
 // =============================================================================
-// STUDENT NAME: ___________________
-// DATE:         ___________________
-// =============================================================================
 // OBJECTIVE:
-//   Implement a more efficient string copy using post-increment addressing.
-//   This version uses fewer instructions than Lab 01 by incrementing the
-//   pointer automatically with each load/store.
+//   Observe how logical instructions with complex immediate values are encoded
+//   in ARMv8. Run this program, then answer the analysis questions in CA_lab_2.md.
 //
-// NEW CONCEPTS:
-//   - Post-increment addressing: [X0], #1 (access memory, then add 1 to X0)
-//   - STURB: Store byte (alternative to STRB)
-//   - CMP/BNE: Compare and branch if not equal
+// CONCEPTS:
+//   - Immediate value encoding limits
+//   - Using MOVZ and MOVK to build 32/64-bit values
+//   - AND / ORR instructions with repeating bit patterns
 //
 // EXPECTED OUTCOME:
-//   - The string at 0x50 should be copied to 0x13C
+//   - X5 = 0x0000_0000_00ff_ffff
+//   - X6 = result of AND with bitmask 0x00003ffc00003ffc
+//   - X7 = result of ORR with bitmask 0x00003ffc00003ffc
 //   - Simulation output: "[EDUCORE LOG]: Apollo has landed"
 //
 // =============================================================================
@@ -26,63 +24,25 @@
 
 _start:
     // =========================================================================
-    // STEP 1: Initialize Pointers and Data (Already done for you)
+    // STEP 1: Building a constant using MOVZ and MOVK
     // =========================================================================
-    MOVZ    X0, #0x0050         // X0 = source pointer
-    MOVZ    X1, #0x013C         // X1 = destination pointer
-    
-    // Store test string "ef" at address 0x50 (simulating data in memory)
-    MOVZ    X5, #0x65           // ASCII 'e' = 0x65
-    MOVZ    X6, #0x66           // ASCII 'f' = 0x66
-    STURB   W5, [X0]            // Store 'e' at address 0x50
-    STURB   W6, [X0, #1]        // Store 'f' at address 0x51
-    STURB   WZR, [X0, #2]       // Store null terminator at 0x52
+    // We want to load X5 with the value 0x00FF_FFFF.
+    // MOVZ only takes a 16-bit immediate, so we need two instructions.
+    // MOVZ zeros out the rest of the register; MOVK keeps existing bits
+    // and overwrites only the specified 16-bit chunk.
+
+    MOVZ    X5, #0xffff                 // X5 = 0x0000_0000_0000_ffff
+    MOVK    X5, #0x00ff, LSL #16        // X5 = 0x0000_0000_00ff_ffff
 
     // =========================================================================
-    // STEP 2: Implement the Copy Loop with Post-Increment (YOUR CODE)
+    // STEP 2: Applying Logical Operations with Bitmasks
     // =========================================================================
-    // 
-    // In Lab 01, you used separate ADD instructions to increment pointers.
-    // Now you'll use POST-INCREMENT addressing which does it automatically!
-    //
-    // Syntax: LDRB W2, [X0], #1
-    //         This loads from [X0], THEN adds 1 to X0 afterward.
-    //
-    // The loop should:
-    //   1. Load byte from source with post-increment
-    //   2. Store byte to destination with post-increment
-    //   3. Compare the byte to zero
-    //   4. If not zero, loop back
-    
-_strcpyloop:
-    // -------------------------------------------------------------------------
-    // TODO #1: Load byte from [X0] into W2, then increment X0 by 1
-    // Syntax: LDRB Wt, [Xn], #1
-    // -------------------------------------------------------------------------
-    
-    // YOUR CODE HERE
-    
-    // -------------------------------------------------------------------------
-    // TODO #2: Store byte from W2 to [X1], then increment X1 by 1
-    // Syntax: STRB Wt, [Xn], #1
-    // -------------------------------------------------------------------------
-    
-    // YOUR CODE HERE
-    
-    // -------------------------------------------------------------------------
-    // TODO #3: Compare X2 to zero
-    // Syntax: CMP Xn, #imm
-    // Note: Use X2 (not W2) for the comparison
-    // -------------------------------------------------------------------------
-    
-    // YOUR CODE HERE
-    
-    // -------------------------------------------------------------------------
-    // TODO #4: Branch back to _strcpyloop if NOT equal to zero
-    // Syntax: BNE label
-    // -------------------------------------------------------------------------
-    
-    // YOUR CODE HERE
+    // ARM logical instructions only accept repeating bit-pattern immediates,
+    // encoded via N, imms, and immr fields (13 bits total).
+    // 0x00003ffc00003ffc is a valid repeating pattern.
+
+    AND     X6, X5, #0x00003ffc00003ffc // X6 = X5 AND bitmask
+    ORR     X7, X5, #0x00003ffc00003ffc // X7 = X5 OR  bitmask
 
     // =========================================================================
     // STEP 3: Signal Completion
