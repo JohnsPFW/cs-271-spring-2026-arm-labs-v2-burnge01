@@ -20,8 +20,8 @@ Check off each lab as you complete it:
 
 | Lab | Topic | Folder | Status |
 |-----|-------|--------|--------|
-| Lab 00 | Introduction to ARM Assembly | `Lab00/` | ⬜ Not Started |
-| Lab 01 | String Copy (STRCPY) | `Lab01/` | ⬜ Not Started |
+| Lab 00 | Introduction to ARM Assembly | `Lab00/` | ✅ Complete |
+| Lab 01 | String Copy (STRCPY) | `Lab01/` | ✅ Complete |
 | Lab 02 | Post-Increment Addressing | `Lab02/` | ⬜ Not Started |
 | Lab 03 | Instruction Exploration | `Lab03/` | ⬜ Not Started |
 | Lab 04 | Pipeline Hazards | `Lab04/` | ⬜ Not Started |
