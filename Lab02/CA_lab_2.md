@@ -79,7 +79,8 @@ The full MOVZ encoding layout:
 
 | 31 | 30-29 | 28-23  | 22-21 | 20-5  | 4-0 |
 |----|-------|--------|-------|-------|-----|
-| sf | 10    | 100101 | hw    | imm16 | Rd  |
+| sf |     |  | hw    | imm16 | Rd  |
+| 1 | 10 | 100101 | 00 | 0000000000000101 | 00000 |
 
 - What are the values of `sf`, `hw`, `imm16`, and `Rd`?
 
@@ -87,16 +88,25 @@ The full MOVZ encoding layout:
 
 The ADD (shifted register) encoding layout:
 
-| 31 | 30 | 29 | 28-24 | 23-22 | 20-16 | 15-10 | 9-5 | 4-0 |
-|----|----|----|-------|-------|-------|-------|-----|-----|
-| sf | op | S  | 01011 | shift | Rm    | imm6  | Rn  | Rd  |
+| 31 | 30 | 29 | 28-24 | 23-22  | 20-16 | 15-10 | 9-5 | 4-0 |
+|----|----|----|-------|--------|------|-------|-----|-----|
+| sf | op | S  |       | shift  | Rm   | imm6  | Rn  | Rd  |
+| 1 | 0 | 0  |    01011   | 00  |  00000   | 000000  | 00100  | 00100  |
 
 - What are the binary values of `Rm`, `Rn`, and `Rd`?
 
 **3. For the instruction `SUBS X0, X0, X1`**
 
 Use the same ADD layout above and compare the two encodings side by side.
+
+| 31 | 30 | 29 | 28-24 | 23-22  | 20-16 | 15-10 | 9-5 | 4-0 |
+|----|----|----|-------|--------|------|-------|-----|-----|
+| sf | op | S  |       | shift  | Rm   | imm6  | Rn  | Rd  |
+| 1 | 1 | 1  |    01011   | 00  |  00001   | 000000  | 00000  | 00000  |
+
 - How does the encoding of `SUBS` differ from `ADD` to signal that condition flags should be updated?
+    - SUBS and ADDS both set bit 29 (S = 1), to update condition flags.
+    - On bit 30 'op': ADD uses (op = 0), and SUB uses (op = 1).
 
 **4. For the instruction `B.NE sum_loop`**
 
@@ -104,10 +114,14 @@ The B.cond encoding layout:
 
 | 31-24    | 23-5  | 4 | 3-0  |
 |----------|-------|---|------|
-| 01010100 | imm19 | 0 | cond |
+|  | imm19 |  | cond |
+| 01010100 | 1111111111111111101 | 0 | 0001 |
 
 - What is the integer (two’s complement) value of `imm19`?
+    - 1111111111111111101 -> 0000000000000000010 = -3
 - Does the resulting byte offset match the distance between `B.NE` and the `sum_loop` label in the disassembly?
+    - -3 x 4 = -12 byte offset (- because branch goes backwards)
+    - Yes, the B.NE and sum_loop are 3 instructions (12 bytes) apart in the disassembly
 
 ---
 

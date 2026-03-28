@@ -1,0 +1,12 @@
+
+Lab02/test_lab02.o:     file format elf64-littleaarch64
+
+
+Disassembly of section .text:
+
+0000000000000000 <_start>:
+   0:	d29fffe5 	mov	x5, #0xffff                	// #65535
+   4:	f2a01fe5 	movk	x5, #0xff, lsl #16
+   8:	921e2ca6 	and	x6, x5, #0x3ffc00003ffc
+   c:	b21e2ca7 	orr	x7, x5, #0x3ffc00003ffc
+  10:	d503203f 	yield

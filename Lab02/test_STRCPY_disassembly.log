@@ -1,0 +1,20 @@
+
+Lab01/test_STRCPY.o:     file format elf64-littleaarch64
+
+
+Disassembly of section .text:
+
+0000000000000000 <_start>:
+   0:	d28000a0 	mov	x0, #0x5                   	// #5
+   4:	d2800021 	mov	x1, #0x1                   	// #1
+   8:	d2800004 	mov	x4, #0x0                   	// #0
+   c:	d2800005 	mov	x5, #0x0                   	// #0
+
+0000000000000010 <sum_loop>:
+  10:	8b000084 	add	x4, x4, x0
+  14:	8b0100a5 	add	x5, x5, x1
+  18:	eb010000 	subs	x0, x0, x1
+  1c:	54ffffa1 	b.ne	10 <sum_loop>  // b.any
+
+0000000000000020 <done>:
+  20:	d503203f 	yield
