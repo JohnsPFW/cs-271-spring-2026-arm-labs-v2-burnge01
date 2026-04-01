@@ -94,14 +94,16 @@ e    b    0    1    0    0    0    0
 
 Compare the `op` and `S` bits to `ADD` above:
 - How does the encoding differ to signal that condition flags should be updated?
-    - On bit 29 'S':  SUBS and ADDS both use (S = 1) to signal that condition flags should be updated.
+    - On bit 29 'S':  SUBS and ADDS use (S = 1) to signal that condition flags should be updated.
+        - ADD/SUB does not update flags (S = 0)
+        - ADDS/SUBS does update flags (S = 1)
     - On bit 30 'op': ADD uses (op = 0), and SUB uses (op = 1).
 
 ---
 
 **4. `B.NE sum_loop`**
 
-Hex encoding (from disassembly log): `0x`
+Hex encoding (from disassembly log): `0x54ffffa1`
 
 Binary (32-bit):
 ```
