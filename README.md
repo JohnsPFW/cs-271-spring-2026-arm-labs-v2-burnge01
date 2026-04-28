@@ -23,8 +23,8 @@ Check off each lab as you complete it:
 | Lab 00 | Introduction to ARM Assembly | `Lab00/` | ✅ Complete |
 | Lab 01 | String Copy (STRCPY) | `Lab01/` | ✅ Complete |
 | Lab 02 | Post-Increment Addressing | `Lab02/` | ✅ Complete |
-| Lab 03 | Instruction Exploration | `Lab03/` | ⬜ Not Started |
-| Lab 04 | Pipeline Hazards | `Lab04/` | ⬜ Not Started |
+| Lab 03 | Instruction Exploration | `Lab03/` | ✅ Complete |
+| Lab 04 | Pipeline Hazards | `Lab04/` | ✅ Complete |
 | Lab 05 | Coming Soon | `Lab05/` | 🔒 Locked |
 | Lab 06 | Coming Soon | `Lab06/` | 🔒 Locked |
 
