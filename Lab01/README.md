@@ -1,76 +1,62 @@
-# Lab 01: String Copy (STRCPY)
+# Lab 01: Counted Loop (Compatibility Update)
 
 ## Overview
 
-In this lab, you will implement a string copy function in ARM assembly. This is similar to the C function `strcpy()` which copies characters from one memory location to another.
+This lab uses a **counted loop** in ARM assembly to practice branching and condition flags.
 
-**Prerequisites:** Complete Lab 00 first!
 
-**Estimated Time:** 45-60 minutes
+## Why this lab changed
 
----
+The original STRCPY version relied on byte load/store instruction forms that are not reliably supported by the current Educore + GNU assembler combination in this repository. This replacement lab keeps the same build/autograder workflow while using a supported instruction subset.
 
 ## Learning Objectives
 
 After completing this lab, you will be able to:
-1. Use memory load instructions (`LDRB`)
-2. Use memory store instructions (`STRB`)
-3. Implement loops with conditional branches (`CBZ`, `B`)
-4. Work with pointers in assembly
+
+1. Build a loop with a label and unconditional branch (`B`)
+2. Use `SUBS` to update a value and set flags
+3. Use conditional branches (`B.NE`)
+4. Use register-to-register arithmetic (`ADD`)
 
 ---
 
 ## Background
 
-### Memory Operations
+### What Is a Counted Loop?
 
-In Lab 00, you worked with registers only. Now you'll read and write to **memory**.
+A counted loop repeats a block of code a fixed number of times.
 
-| Instruction | Syntax | Meaning |
-|-------------|--------|---------|
-| `LDRB` | `LDRB W2, [X0]` | Load a byte from memory address in X0 into W2 |
-| `STRB` | `STRB W2, [X1]` | Store the byte in W2 to memory address in X1 |
+In this lab:
 
-### String Representation
+- `X0` is the loop counter (starts at `5`)
+- `X4` is a running sum
+- `X5` counts how many iterations occurred
+- `X1` stores the constant value `1` so we can increment/decrement using a **register form** of `ADD`/`SUBS`
 
-A "string" in memory is just a sequence of bytes (characters) ending with a **null terminator** (value 0).
+### Loop Algorithm
 
-Example: The string "Hello" in memory:
-```
-Address:  0x50  0x51  0x52  0x53  0x54  0x55
-Value:    'H'   'e'   'l'   'l'   'o'   0x00  ← null terminator
-          72    101   108   108   111    0
-```
-
-### The STRCPY Algorithm
-
-```
-1. Load byte from source address
-2. Store byte to destination address
-3. If byte was 0 (null terminator), we're done
-4. Otherwise, increment both pointers and repeat
+```text
+1. Add counter (X0) to running sum (X4)
+2. Increment iteration count (X5)
+3. Decrement counter (X0)
+4. If counter is not zero, loop back
+5. When counter reaches zero, finish with YIELD
 ```
 
----
+## Assignment
 
-## Your Task
+Open `Lab01/test_STRCPY.s` and complete the TODO sections to implement a loop that:
 
-Open `test_STRCPY.s` and complete the TODO sections to implement the string copy loop.
+- Starts with a counter value of `5`
+- Adds the counter into a running sum each iteration
+- Decrements the counter by `1`
+- Repeats until the counter reaches `0`
 
-### Memory Layout
+Expected final values:
 
-| Location | Address | Content |
-|----------|---------|---------|
-| Source string | 0x50 (80 decimal) | "Hello" |
-| Destination buffer | 0x13C (316 decimal) | Empty space |
-
-### What You Need to Do
-
-1. **Exercise 1:** Load a byte from source into W2 using `LDRB`
-2. **Exercise 2:** Store that byte to destination using `STRB`
-3. **Exercise 3:** Check if it's the null terminator using `CBZ`
-4. **Exercise 4:** Increment both pointers using `ADD`
-5. **Exercise 5:** Loop back using `B`
+- `X0 = 0` (counter exhausted)
+- `X4 = 15` (sum of `5 + 4 + 3 + 2 + 1`)
+- `X5 = 5` (iteration count)
 
 ---
 
@@ -78,27 +64,30 @@ Open `test_STRCPY.s` and complete the TODO sections to implement the string copy
 
 ### Step 1: Understand the Starter Code
 
-The file already has:
-- `MOV X0, #0x50` — X0 points to source string
-- `MOV X1, #0x13C` — X1 points to destination
-- A `copy_loop:` label for the loop
-- A `done:` label with `YIELD`
+The file already initializes:
 
-### Step 2: Implement the Loop
+- `X0 = 5` (loop counter)
+- `X1 = 1` (constant for increment/decrement)
+- `X4 = 0` (running sum)
+- `X5 = 0` (iteration count)
+- `sum_loop:` label
+- `done:` label with `YIELD`
 
-Add these instructions in the TODO sections:
+### Step 2: Add the Loop Instructions
+
+Fill in the TODOs in `Lab01/test_STRCPY.s` with these instructions:
 
 ```asm
-copy_loop:
-    LDRB    W2, [X0]      // Load byte from source
-    STRB    W2, [X1]      // Store byte to destination
-    CBZ     W2, done      // If byte is 0, we're done
-    ADD     X0, X0, #1    // Move source pointer forward
-    ADD     X1, X1, #1    // Move destination pointer forward
-    B       copy_loop     // Repeat
+sum_loop:
+ADD X4, X4, X0 // Add counter into running sum
+ADD X5, X5, X1 // Increment iteration count
+SUBS X0, X0, X1 // Decrement counter and set flags
+B.NE sum_loop // Loop again while X0 != 0
 ```
 
 ### Step 3: Build and Run
+
+Run:
 
 ```bash
 make sim_lab01
@@ -107,103 +96,92 @@ make sim_lab01
 ### Step 4: Verify Success
 
 You should see:
-```
+
+```text
 [EDUCORE LOG]: Apollo has landed
 ```
 
-### Step 5: Check Waveforms (Optional)
+### Step 5: Verify Register Values (Optional)
 
-Open `dump.vcd` in Surfer and verify:
-- X0 ends at a value past 0x50
-- X1 ends at a value past 0x13C
-- Memory at 0x13C now contains "Hello"
+Open `dump.vcd` in Surfer and verify near the end of execution:
+
+- `X0 = 0`
+- `X4 = 15`
+- `X5 = 5`
 
 ---
 
 ## Understanding the Instructions
 
-### LDRB W2, [X0]
+### `ADD X4, X4, X0`
 
-- `LDRB` = Load Register Byte
-- `W2` = 32-bit destination register (lower 32 bits of X2)
-- `[X0]` = Memory address stored in X0
+- Adds `X4 + X0`
+- Stores the result back into `X4`
+- Used here to build the running sum
 
-This reads ONE BYTE from the memory address in X0 and puts it in W2.
+### `ADD X5, X5, X1`
 
-### STRB W2, [X1]
+- Adds `1` to the iteration counter (because `X1 = 1`)
+- We use register form `ADD`, which is compatible with this Educore build
 
-- `STRB` = Store Register Byte
-- `W2` = Source register
-- `[X1]` = Memory address stored in X1
+### `SUBS X0, X0, X1`
 
-This writes ONE BYTE from W2 to the memory address in X1.
+- Subtracts `1` from the loop counter
+- Stores result in `X0`
+- Also updates condition flags (NZCV), which the next branch uses
 
-### CBZ W2, done
+### `B.NE sum_loop`
 
-- `CBZ` = Compare and Branch if Zero
-- `W2` = Register to check
-- `done` = Label to jump to if W2 equals 0
-
-If W2 is 0 (null terminator), jump to the `done` label.
-
-### B copy_loop
-
-- `B` = Branch (unconditional jump)
-- `copy_loop` = Label to jump to
-
-Always jump back to the start of the loop.
+- Branches back to `sum_loop` if the Zero flag is **not** set
+- In this lab, that means "branch if `X0` is not zero"
 
 ---
 
-## Common Mistakes
+## Suggested Solution Pattern
 
-### Wrong register size
+You will use these supported instructions:
+
+- `MOVZ`
+- `ADD` (register form)
+- `SUBS` (register form)
+- `B.NE`
+- `B`
+- `YIELD`
+
+---
+
+## Common Issues
+
+1. Using `ADD Xn, Xm, #1` (immediate form) may not work with this Educore build.
+2. Using `CBZ` / `CBNZ` may not work with this Educore build.
+3. Forgetting to branch back to the loop label causes only one iteration.
+4. Using `SUB` instead of `SUBS` means flags are not updated, so `B.NE` may behave incorrectly.
+
+### Example: Missing Flag Update
+
 ```asm
-LDRB    X2, [X0]    // ❌ WRONG - use W2 for byte operations
-LDRB    W2, [X0]    // ✅ CORRECT
+// ❌ WRONG - SUB does not update flags
+SUB X0, X0, X1
+B.NE sum_loop
+
+// ✅ CORRECT - SUBS updates flags for B.NE
+SUBS X0, X0, X1
+B.NE sum_loop
 ```
 
-### Forgetting to increment pointers
+### Example: Unsupported Immediate Increment Form
+
 ```asm
-// ❌ Infinite loop - pointers never move!
-copy_loop:
-    LDRB    W2, [X0]
-    STRB    W2, [X1]
-    CBZ     W2, done
-    B       copy_loop
+// ❌ May fail on this Educore build
+ADD X5, X5, #1
 
-// ✅ CORRECT - increment both pointers
-copy_loop:
-    LDRB    W2, [X0]
-    STRB    W2, [X1]
-    CBZ     W2, done
-    ADD     X0, X0, #1
-    ADD     X1, X1, #1
-    B       copy_loop
-```
-
-### Checking for null BEFORE storing
-```asm
-// ❌ WRONG - doesn't copy the null terminator
-copy_loop:
-    LDRB    W2, [X0]
-    CBZ     W2, done      // Jumps before storing!
-    STRB    W2, [X1]
-    ...
-
-// ✅ CORRECT - store first, then check
-copy_loop:
-    LDRB    W2, [X0]
-    STRB    W2, [X1]      // Store happens first
-    CBZ     W2, done      // Then check
-    ...
+// ✅ Use register form with X1 = 1
+ADD X5, X5, X1
 ```
 
 ---
 
 ## Submission
-
-When your code works:
 
 ```bash
 git add .
@@ -211,22 +189,8 @@ git commit -m "Completed Lab 01"
 git push
 ```
 
-The autograder will verify that your STRCPY implementation is correct.
+The autograder checks that:
 
----
-
-## Quick Reference
-
-```asm
-LDRB    W2, [X0]      // Load byte from memory
-STRB    W2, [X1]      // Store byte to memory
-CBZ     W2, label     // Branch if W2 == 0
-ADD     X0, X0, #1    // Increment pointer
-B       label         // Unconditional branch
-```
-
----
-
-## Next Steps
-
-After completing Lab 01, you'll be ready for Lab 02 where you'll learn about more complex data structures and operations!
+- your file is not the untouched starter template
+- the code assembles
+- the simulation reaches `YIELD`

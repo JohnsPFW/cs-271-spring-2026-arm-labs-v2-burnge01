@@ -1,3 +1,4 @@
+[![Open in Codespaces](https://classroom.github.com/assets/launch-codespace-2972f46106e565e64193e422d61a12cf1da4916b45550586e14ef0a7c637dd04.svg)](https://classroom.github.com/open-in-codespaces?assignment_repo_id=22314130)
 # CS 271 Computer Architecture - ARM Labs
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/JaydJohns/CS-Architecture-ARM-Labs)
@@ -19,11 +20,11 @@ Check off each lab as you complete it:
 
 | Lab | Topic | Folder | Status |
 |-----|-------|--------|--------|
-| Lab 00 | Introduction to ARM Assembly | `Lab00/` | ⬜ Not Started |
-| Lab 01 | String Copy (STRCPY) | `Lab01/` | ⬜ Not Started |
-| Lab 02 | Post-Increment Addressing | `Lab02/` | ⬜ Not Started |
-| Lab 03 | Instruction Exploration | `Lab03/` | ⬜ Not Started |
-| Lab 04 | Pipeline Hazards | `Lab04/` | ⬜ Not Started |
+| Lab 00 | Introduction to ARM Assembly | `Lab00/` | ✅ Complete |
+| Lab 01 | String Copy (STRCPY) | `Lab01/` | ✅ Complete |
+| Lab 02 | Post-Increment Addressing | `Lab02/` | ✅ Complete |
+| Lab 03 | Instruction Exploration | `Lab03/` | ✅ Complete |
+| Lab 04 | Pipeline Hazards | `Lab04/` | ✅ Complete |
 | Lab 05 | Coming Soon | `Lab05/` | 🔒 Locked |
 | Lab 06 | Coming Soon | `Lab06/` | 🔒 Locked |
 
